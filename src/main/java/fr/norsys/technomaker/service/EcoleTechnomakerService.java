@@ -5,11 +5,13 @@ import fr.norsys.technomaker.model.Enseignant;
 import fr.norsys.technomaker.model.Etudiant;
 import fr.norsys.technomaker.model.Formation;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
@@ -54,19 +56,42 @@ public class EcoleTechnomakerService {
         return ecoleTechnomaker.getEtudiants().stream().collect(Collectors.groupingBy(ecole->ecole.getEcole(),Collectors.counting()));
     }
 
-
     /**
      * créer une fonction qui retourne une map des enseignants avec leur partition s'il anime plus d'une seule formation
      * et la somme des volumes horaires de ces formations
      */
     public Map<Enseignant, Map<Boolean, Integer>> getFormationSommeVHPartitionParEnseignant(EcoleTechnomaker ecoleTechnomaker) {
+    	Map<Enseignant, Long> listd = ecoleTechnomaker.getFormations().stream().collect(Collectors.groupingBy(
+    			ens->ens.getEnseignant(),Collectors.counting()
+    			));
+    
     	
-    	return ecoleTechnomaker.getFormations().stream().collect(Collectors.groupingBy(ens->ens.getEnseignant(),Collectors.groupingBy
-    			(
-    				Collectors.partitioningBy(Collectors.counting()>1)
-    			    ,
-    			Collectors.reducing(0, Formation::getVolumeHoraire,(x,y)-> x+y )
-    			)));
+    	 	return ecoleTechnomaker.getFormations().stream().collect
+    	 			(
+    	 					Collectors.groupingBy(ens->ens.getEnseignant(),
+    	 			
+    	 						
+    	 									Collectors.partitioningBy(ens1->listd.get(ens1.getEnseignant())>1, Collectors.reducing(0,Formation::getVolumeHoraire,(x,y)->x+y))
+    	 					
+//    	 									Collectors.partitioningBy(
+//    	 											listd.forEach(ens->ens).values()>1
+//    	 											),
+//    	 					
+//    	 									Collectors.reducing(0,Formation::getVolumeHoraire,(x,y)->x+y)
+    	 					
+    	 					
+    	 			
+    	 			
+    	 			));    	 
+//    	return ecoleTechnomaker.getFormations().stream().collect(Collectors.groupingBy(ens->ens.getEnseignant(),Collectors.groupingBy
+//    			(
+//    					
+//    			Collectors.partitioningBy(false)
+//    			    ,
+//    			Collectors.reducing(0, Formation::getVolumeHoraire,(x,y)-> x+y)
+//    			)
+//    			)
+//    			);
     			
     }
 
