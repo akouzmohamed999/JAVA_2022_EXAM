@@ -5,10 +5,9 @@ import fr.norsys.technomaker.model.Enseignant;
 import fr.norsys.technomaker.model.Etudiant;
 import fr.norsys.technomaker.model.Formation;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EcoleTechnomakerService {
 
@@ -17,7 +16,8 @@ public class EcoleTechnomakerService {
      * sinon throw NoSuchElementException
      */
     public Enseignant getEnseignantFromFormation(Formation formation){
-        return null;
+        return Optional.ofNullable(formation).map(formation1 -> formation.getEnseignant())
+                .orElseThrow(NoSuchElementException::new);
     }
 
     /**
@@ -26,21 +26,23 @@ public class EcoleTechnomakerService {
      * sinon throw NoSuchElementException
      */
     public Enseignant getEnseignantFromFormation(Formation formation1, Formation formation2){
-        return null;
+        return Optional.ofNullable(formation1).or(() -> Optional.ofNullable(Optional.ofNullable(formation2)
+                .orElseThrow(NoSuchElementException::new));
     }
 
     /**
      * créer une fonction qui retourne une map des enseignants avec leurs formations correspondantes
      */
     public Map<Enseignant, List<Formation>> getFormationsParEnseignant(EcoleTechnomaker ecoleTechnomaker) {
-        return null;
+        return Optional.ofNullable(ecoleTechnomaker).stream().map(EcoleTechnomaker::getFormations);
     }
 
     /**
      * créer une fonction qui retourne la somme des volumes horaires
      */
     public int calculerVolumeHoraire(EcoleTechnomaker ecoleTechnomaker) {
-        return 0;
+        return ecoleTechnomaker.getFormations().stream().mapToInt(formation->
+                formation.getVolumeHoraire()).sum();
     }
 
     /**
@@ -56,7 +58,7 @@ public class EcoleTechnomakerService {
      * et la somme des volumes horaires de ces formations
      */
     public Map<Enseignant, Map<Boolean, Integer>> getFormationSommeVHPartitionParEnseignant(EcoleTechnomaker ecoleTechnomaker) {
-        return null;
+        return Optional.ofNullable(ecoleTechnomaker).stream().collect(Collectors.partitioningBy(o -> o.getFormations()));
     }
 
 }
