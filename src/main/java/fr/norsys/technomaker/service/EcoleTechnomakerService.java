@@ -8,7 +8,11 @@ import fr.norsys.technomaker.model.Formation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EcoleTechnomakerService {
 
@@ -17,7 +21,7 @@ public class EcoleTechnomakerService {
      * sinon throw NoSuchElementException
      */
     public Enseignant getEnseignantFromFormation(Formation formation){
-        return null;
+        return Optional.ofNullable(formation).map(enseigant -> enseigant.getEnseignant()).orElseThrow(NoSuchElementException::new);
     }
 
     /**
@@ -26,28 +30,33 @@ public class EcoleTechnomakerService {
      * sinon throw NoSuchElementException
      */
     public Enseignant getEnseignantFromFormation(Formation formation1, Formation formation2){
-        return null;
+
+       return Optional.ofNullable(formation1).or(() -> Optional.ofNullable(formation2)).map(enseigant -> enseigant.getEnseignant())
+      		.orElseThrow(NoSuchElementException::new);
+
     }
 
     /**
      * créer une fonction qui retourne une map des enseignants avec leurs formations correspondantes
      */
     public Map<Enseignant, List<Formation>> getFormationsParEnseignant(EcoleTechnomaker ecoleTechnomaker) {
-        return null;
+        return ecoleTechnomaker.getFormations().stream().collect(Collectors.groupingBy(
+        		ensei -> ensei.getEnseignant()));
     }
 
     /**
      * créer une fonction qui retourne la somme des volumes horaires
      */
     public int calculerVolumeHoraire(EcoleTechnomaker ecoleTechnomaker) {
-        return 0;
+    	return ecoleTechnomaker.getFormations().stream().mapToInt(form -> form.getVolumeHoraire()).sum();
     }
 
     /**
      * créer une fonction qui retourne une map des écoles nom avec le nombre de leurs étudiants
      */
     public Map<String, Long> getRepresentationEcole(EcoleTechnomaker ecoleTechnomaker) {
-        return null;
+         return ecoleTechnomaker.getEtudiants().stream().collect(Collectors.groupingBy(ecole -> ecole.getEcole(),
+        		 Collectors.counting()));
     }
 
 
@@ -56,7 +65,13 @@ public class EcoleTechnomakerService {
      * et la somme des volumes horaires de ces formations
      */
     public Map<Enseignant, Map<Boolean, Integer>> getFormationSommeVHPartitionParEnseignant(EcoleTechnomaker ecoleTechnomaker) {
-        return null;
+        return ecoleTechnomaker.getFormations().stream().collect(Collectors.groupingBy(
+        		ensei -> ensei.getEnseignant(),
+        		Collectors.groupingBy(Collectors.partitioningBy(ensei -> ensei.getEnseignant().getAnciennete() > 1,
+        		Collectors.reducing(0, ensei -> ensei., (num1,num2)-> { //
+                 return num1+num2;
+                 		})	
+        		))));
     }
 
 }
