@@ -63,36 +63,14 @@ public class EcoleTechnomakerService {
     public Map<Enseignant, Map<Boolean, Integer>> getFormationSommeVHPartitionParEnseignant(EcoleTechnomaker ecoleTechnomaker) {
     	Map<Enseignant, Long> listd = ecoleTechnomaker.getFormations().stream().collect(Collectors.groupingBy(
     			ens->ens.getEnseignant(),Collectors.counting()
-    			));
-    
-    	
+    			));    	
     	 	return ecoleTechnomaker.getFormations().stream().collect
     	 			(
     	 					Collectors.groupingBy(ens->ens.getEnseignant(),
-    	 			
-    	 						
-    	 									Collectors.partitioningBy(ens1->listd.get(ens1.getEnseignant())>1, Collectors.reducing(0,Formation::getVolumeHoraire,(x,y)->x+y))
-    	 					
-//    	 									Collectors.partitioningBy(
-//    	 											listd.forEach(ens->ens).values()>1
-//    	 											),
-//    	 					
-//    	 									Collectors.reducing(0,Formation::getVolumeHoraire,(x,y)->x+y)
-    	 					
-    	 					
-    	 			
-    	 			
+    	 							Collectors.partitioningBy(ens1->listd.get(ens1.getEnseignant())>1, 
+    	 									Collectors.reducing(0,Formation::getVolumeHoraire,(x,y)->x+y))
     	 			));    	 
-//    	return ecoleTechnomaker.getFormations().stream().collect(Collectors.groupingBy(ens->ens.getEnseignant(),Collectors.groupingBy
-//    			(
-//    					
-//    			Collectors.partitioningBy(false)
-//    			    ,
-//    			Collectors.reducing(0, Formation::getVolumeHoraire,(x,y)-> x+y)
-//    			)
-//    			)
-//    			);
-    			
+
     }
 
 }
